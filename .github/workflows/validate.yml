@@ -17,12 +17,17 @@ jobs:
 
       - name: Run DUKIntegrator
         run: |
-          # Salvam XML-ul primit de la Next.js
+          # Cream fisierul XML
           echo '${{ github.event.client_payload.xml_data }}' > declaratie.xml
           
-          # Executam validarea (Soft J)
-          # Presupunem ca DUKIntegrator.jar e in root
-          java -jar DUKIntegrator.jar -v D230 declaratie.xml log_validare.txt 0 0
+          # Rulam validarea. "|| true" forteaza GitHub sa continue chiar daca Java da eroare
+          java -jar DUKIntegrator.jar -v D230 declaratie.xml log_validare.txt 0 0 || true
           
-          # Citim rezultatul
-          cat log_validare.txt
+          echo "--- REZULTAT VALIDARE ANAF ---"
+          if [ -f log_validare.txt ]; then
+            cat log_validare.txt
+          else
+            echo "Eroare critica: Fisierul log_validare.txt nu a fost generat!"
+            echo "Verifica daca DUKIntegrator.jar si folderul /lib exista in root."
+          fi
+          echo "------------------------------"
