@@ -1,0 +1,27 @@
+name: Validate D230
+on:
+  repository_dispatch:
+    types: [validate-xml]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Validator
+        run: |
+          # Save the XML from the API payload to a file
+          echo '${{ github.event.client_payload.xml_content }}' > input.xml
+          
+          # Run the Soft J validator
+          # Note: Adjust the path to your .jar file
+          java -jar D230Validator.jar -v D230 input.xml > log.txt 2>&1
+          
+          # Output the log to the console so we can read it later
+          cat log.txt
