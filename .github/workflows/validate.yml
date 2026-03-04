@@ -31,3 +31,8 @@ jobs:
             echo "Verifica daca DUKIntegrator.jar si folderul /lib exista in root."
           fi
           echo "------------------------------"
+      - name: Salveaza Log-ul ca Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rezultat-validare
+          path: log_validare.txt
