@@ -1,27 +1,28 @@
-name: Validate D230
+name: ANAF D230 Validator
 on:
   repository_dispatch:
-    types: [validate-xml]
+    types: [run-validation]
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 17
+
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '8' # ANAF foloseste versiuni mai vechi de Java, 8 e cea mai sigura
           distribution: 'temurin'
 
-      - name: Run Validator
+      - name: Run DUKIntegrator
         run: |
-          # Save the XML from the API payload to a file
-          echo '${{ github.event.client_payload.xml_content }}' > input.xml
+          # Salvam XML-ul primit de la Next.js
+          echo '${{ github.event.client_payload.xml_data }}' > declaratie.xml
           
-          # Run the Soft J validator
-          # Note: Adjust the path to your .jar file
-          java -jar D230Validator.jar -v D230 input.xml > log.txt 2>&1
+          # Executam validarea (Soft J)
+          # Presupunem ca DUKIntegrator.jar e in root
+          java -jar DUKIntegrator.jar -v D230 declaratie.xml log_validare.txt 0 0
           
-          # Output the log to the console so we can read it later
-          cat log.txt
+          # Citim rezultatul
+          cat log_validare.txt
